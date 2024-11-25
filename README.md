@@ -12,9 +12,11 @@ To obtain the GPT-4 + Vertex generations:\
 `python citation_systems/generatePostHocOutputs.py --start_n 0 --n 20 --project_name example --data nq` 
 
 ### Using the annotation interface
-First, generations from generateOperatingPoint.py, generatePostHocOutputs.py, and generateGeminiOutputs.py must be processed with the following script: 
-
+First, generations from generateOperatingPoint.py, generatePostHocOutputs.py, and generateGeminiOutputs.py must be processed with the following script: \
 `python annotation_interface/annotation_processing_for_sl.py --filename example_generations.jsonl --start_n 0 --n 20`
+
+Next, instances to annotate from the csv obtained in the previous step must be loaded to Supabase: \
+`python annotation_interface/load_instances_to_annotate.py --filename example_generations.csv --db example_instances_to_annotate`
 
 ### Data
 Coming soon!
