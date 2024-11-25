@@ -48,20 +48,6 @@ mturk_baseline_fps = {
     'MH': 'mh_mturk_eval_byQueryOP_baseline',
     'MASH': 'mash_mturk_eval_byQueryOP_baseline',
 }
-# # _cleaned_minus_one_coverage_UF
-# mturk_op_fps_all = {
-#     'NQ': 'nq_mturk_with_needs_citation_labels2_cleaned_minus_one_coverage_UF',
-#     'Eta3G': 'eli3_mturk_with_needs_citation_labels_cleaned_minus_one_coverage_UF',
-#     'MH': 'mh_mturk_with_needs_citation_labels_cleaned_minus_one_coverage_UF',
-#     'MASH': 'mash_mturk_with_needs_citation_labels_cleaned_minus_one_coverage_UF',
-# }
-
-# mturk_baseline_fps_all = {
-#     'NQ': 'nq_baseline_mturk_with_needs_citation_labels_cleaned_minus_one_coverage_UF',
-#     'Eta3G': 'eli3_baseline_mturk_with_needs_citation_labels_cleaned_minus_one_coverage_UF',
-#     'MH': 'mh_baseline_mturk_with_needs_citation_labels_cleaned_minus_one_coverage_UF',
-#     'MASH': 'mash_baseline_mturk_with_needs_citation_labels_cleaned_minus_one_coverage_UF',
-# }
 
 def load_pilot_results_for_ds(k):
     # Returns a df of the pilot results for the specified dataset

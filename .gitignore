@@ -15,3 +15,6 @@ Thumbs.db
 # Ignore specific folders
 /mturk_results/
 /visualize_results/.ipynb_checkpoints/
+/prolific_results/
+citation_systems/.ipynb_checkpoints/
+failure_analysis/.ipynb_checkpoints/
