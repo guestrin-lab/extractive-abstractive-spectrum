@@ -19,13 +19,14 @@ def get_precision_annotations_by_source_by_op(results, op_ls):
     for op in op_ls: # ['Quoted', 'Paraphrased', 'Entailed', 'Abstractive', 'Post Hoc', 'Gemini']:
         if (op == 'Snippet'):
             continue
-        op_results = results[results['op']==op]
-        for i in range(len(op_results)):
-            curr_response = op_results.iloc[i]
-            response_precision_annotations_by_source = get_precision_annotations_by_source_for_response(curr_response)
-            if (response_precision_annotations_by_source == None):
-                return
-            precision_annotations_by_source_by_op[op].extend(response_precision_annotations_by_source)
+        for dataset in np.unique(results['dataset']):
+            op_results = results[(results['op']==op)&(results['dataset']==dataset)]
+            for i in range(len(op_results)):
+                curr_response = op_results.iloc[i]
+                response_precision_annotations_by_source = get_precision_annotations_by_source_for_response(curr_response)
+                if (response_precision_annotations_by_source == None): 
+                    continue
+                precision_annotations_by_source_by_op[op].extend(response_precision_annotations_by_source)
     return precision_annotations_by_source_by_op
 
 def get_precision_annotations_by_source_for_response(response_df, suffix=''):
@@ -108,32 +109,34 @@ def get_coverage_annotations_by_op(results, op_ls):
     coverage_annotations_by_op = get_dict_for_op_ls(op_ls) # {'Quoted':[], 'Paraphrased':[], 'Entailed':[], 'Abstractive':[], 'Post Hoc':[], 'Gemini':[]}
     for op in op_ls: # ['Quoted', 'Paraphrased', 'Entailed', 'Abstractive', 'Post Hoc', 'Gemini']:
         if (op == 'Snippet'):
-            continue
-        # Obtain the coverage annotations {0,1} for all citations for all responses for the specified OP
-        op_results = results[results['op']==op]
-        # return the coverage annotations {0,1} for all citations of that operating point
-        all_cov_ls = []
-        for query_id in op_results['query_id']:
-            all_cov_ls.extend(get_cov_results_for_response(results, op, query_id))
-        coverage_annotations_by_op[op] = all_cov_ls
+                continue
+        for dataset in np.unique(results['dataset']):
+            # Obtain the coverage annotations {0,1} for all citations for all responses for the specified OP
+            op_results = results[(results['op']==op)&(results['dataset']==dataset)]
+            # return the coverage annotations {0,1} for all citations of that operating point
+            all_cov_ls = []
+            for query_id in op_results['query_id']:
+                all_cov_ls.extend(get_cov_results_for_response(op_results, op, query_id))
+            coverage_annotations_by_op[op].extend(all_cov_ls)
     return coverage_annotations_by_op
 
 def get_t2v_for_op(results, op, over_response=False, num_sentences=0):
     # if there is no coverage annotation for a sentence, there is no recorded T2V
     # return the T2V coverage for all sentences of that operating point
-    op_results = results[results['op']==op]
     all_ls = []
-    for query_id in op_results['query_id']:
-        # Obtain the T2V coverage for all citations the specified response
-        cov_t2v_annotations = eval(results[(results['query_id']==query_id)&(results['op']==op)]['t2v_coverage'].iloc[0])
-        if (over_response):
-            if (num_sentences==0):
-                all_ls.append(np.sum(cov_t2v_annotations))
-            else:
-                if (len(cov_t2v_annotations) == num_sentences):
+    for dataset in np.unique(results['dataset']):
+        op_df = results[(results['op']==op)&(results['dataset']==dataset)]
+        for query_id in op_df['query_id']:
+            # Obtain the T2V coverage for all citations the specified response
+            cov_t2v_annotations = eval(op_df[op_df['query_id']==query_id]['t2v_coverage'].iloc[0])
+            if (over_response):
+                if (num_sentences==0):
                     all_ls.append(np.sum(cov_t2v_annotations))
-        else:
-            all_ls.extend(cov_t2v_annotations)
+                else:
+                    if (len(cov_t2v_annotations) == num_sentences):
+                        all_ls.append(np.sum(cov_t2v_annotations))
+            else:
+                all_ls.extend(cov_t2v_annotations)
     return all_ls
 
 def get_normalized_t2v_for_op(results, op):

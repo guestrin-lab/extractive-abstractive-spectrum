@@ -75,6 +75,7 @@ def load_all_pilot_results():
     results_dict = {}
     for k in datasets:
         results_k = load_pilot_results_for_ds(k)
+        # results_k['dataset'] = k
         all_results = pd.concat([all_results, results_k])
         results_dict[k] = results_k
     return all_results, results_dict
@@ -107,6 +108,7 @@ def load_all_mturk_results(needs_citation_only=True):
     results_dict = {}
     for k in datasets:
         results_k = load_mturk_results_for_ds(k, needs_citation_only)
+        # results_k['dataset'] = k
         all_results = pd.concat([all_results, results_k])
         results_dict[k] = results_k
     return all_results, results_dict
