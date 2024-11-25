@@ -16,7 +16,7 @@ First, generations from generateOperatingPoint.py, generatePostHocOutputs.py, an
 `python annotation_interface/annotation_processing_for_sl.py --filename example_generations.jsonl --start_n 0 --n 20`
 
 Next, instances to annotate from the csv obtained in the previous step must be loaded to Supabase: \
-`python annotation_interface/load_instances_to_annotate.py --filename example_generations.csv --db example_instances_to_annotate`
+`python annotation_interface/load_instances_to_annotate.py --filename example_generations.csv --db instances_to_annotate`
 
 ### Data
 Coming soon!
