@@ -3,57 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# loads all results
-def load_results():
-    # k = 'NQ', 'Eta3G', 'MH', or 'MASH'
-    # choose dataset
-    result_tag = '_cleaned_minus_one_coverage_UF.csv'
-    
-    dataset_str_ls = ['NQ', 'Eta3G', 'MH', 'MASH']
-    ops = ['Snippet', 'Quoted', 'Paraphrased', 'Entailed', 'Abstractive', 'Gemini', 'Post Hoc']
-    all_ops = ['Snippet', 'Quoted', 'Quoted Reeval', 'Paraphrased', 'Entailed', 'Abstractive', 'Gemini', 'Post Hoc']
-    op_fps = {'NQ': 'needs_citation_results/nq_mturk_with_needs_citation_labels2',
-           'MH': 'needs_citation_results/mh_mturk_with_needs_citation_labels',
-           'MASH': 'needs_citation_results/mash_mturk_with_needs_citation_labels',
-           'Eta3G': 'needs_citation_results/eli3_mturk_with_needs_citation_labels',
-          }
-    baseline_fps = {'NQ': 'needs_citation_results/nq_baseline_mturk_with_needs_citation_labels',
-           'MH': 'needs_citation_results/mh_baseline_mturk_with_needs_citation_labels',
-           'MASH': 'needs_citation_results/mash_baseline_mturk_with_needs_citation_labels',
-           'Eta3G': 'needs_citation_results/eli3_baseline_mturk_with_needs_citation_labels',
-          }
-    results_by_dataset = {}
-    for k in op_fps.keys():
-        op_df = pd.read_csv(op_fps[k]+result_tag, index_col=False)
-        baseline_df = pd.read_csv(baseline_fps[k]+'.csv', index_col=False)
-        
-        # rename the reeval quoted op for the outputs
-        baseline_df_outputs_no_quoted = baseline_df[baseline_df['op']!='Quoted']
-        baseline_df_outputs_quoted = baseline_df[baseline_df['op']=='Quoted']
-        baseline_df_outputs_quoted.loc[:,'op'] = ['Quoted Reeval']*len(baseline_df_outputs_quoted)
-        baseline_df = pd.concat([baseline_df_outputs_no_quoted, baseline_df_outputs_quoted])
-        
-        dataset_results = pd.concat([op_df, baseline_df])
-        results_by_dataset[k] = dataset_results
-        
-    # Trim to 120 queries per OP per dataset
-    n_to_keep = 120
-    for dataset in dataset_str_ls:
-        new_dataset_results = pd.DataFrame()
-        dataset_results = results_by_dataset[dataset]
-        for op in all_ops:
-            dataset_op_results = dataset_results[dataset_results['op']==op]
-            dataset_op_results = dataset_op_results.sort_values('query_id')
-            dataset_op_results = dataset_op_results.iloc[:120]
-            new_dataset_results = pd.concat([new_dataset_results, dataset_op_results], ignore_index=True)
-        results_by_dataset[dataset] = new_dataset_results
-    
-    for dataset in dataset_str_ls:
-        assert len(results_by_dataset[dataset]) == n_to_keep*len(all_ops)
-        
-    assert len(results_by_dataset) == 4
-    return results_by_dataset
-
 ###################################################################################################
 # Extract data from database CSVs
 ###################################################################################################
