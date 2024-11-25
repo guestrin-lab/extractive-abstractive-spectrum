@@ -1,0 +1,7 @@
+streamlit==1.33.0
+numpy
+pandas
+st-supabase-connection
+git+https://github.com/streamlit/gsheets-connection.git@6d50cc196602cac909ffc9a47668b525ada7ccf7
+supabase
+boto3
