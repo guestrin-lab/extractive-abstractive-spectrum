@@ -2,7 +2,6 @@ from instructions import *
 from few_shot_examples import *
 from eval import evaluate_quote_coverage
 from utils import format_remove_quotation_marks, generate_from_model, format_source_list, get_quotes
-import global_vars
 
 # Operating Point: Inline Quotes
 def best_of_k_quoted_answer(question, sources, backbone_model, k, dataset=None, using_gold=False):
