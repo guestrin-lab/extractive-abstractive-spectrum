@@ -5,7 +5,7 @@ datasets = ['NQ', 'Eta3G', 'MH', 'MASH']
 all_ops = ['Snippet', 'Quoted', 'Quoted Reeval', 'Paraphrased', 'Entailed', 'Abstractive', 'Gemini', 'Post Hoc']
 
 pilot_fp = '../pilot_results/'
-mturk_fp = '../mturk_results/'
+mturk_fp = '../mturk_results/processed_results/'
 
 pilot_op_input_fps = {
     'NQ': 'nq_pilot_eval_0_20_byQueryOP_inputs.csv',
