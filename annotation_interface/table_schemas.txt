@@ -1,0 +1,31 @@
+annotations
+	uuid: int8 (primary)
+	annotatorID: text
+	human_fluency_rating: int8
+	human_utility_rating: int8
+	op: text
+	query_id: int8
+	is_covered: bool[]
+	t2v_precision: float8[]
+	t2v_coverage: float8[]
+	precise_citations: jsonb
+	requires_attrib: bool[]
+	created_at: timestamptz
+
+instances_to_annotate
+	query_id: int8 (primary)
+	ops: text[]
+	created_at: timestamptz
+
+annotators
+	id: int8 (primary)
+	annotator_id: text
+	annotated_query_ids: int8[]
+	promised_query_ids: int8[]
+	promised_ops: text[]
+	created_at: timestamptz
+	
+hit_completion_codes
+	hit_specific_id: int8
+	completion_code: text
+	created_at: timestamptz
