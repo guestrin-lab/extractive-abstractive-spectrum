@@ -19,9 +19,9 @@ In this repository, we share our code to obtain generations from the seven syste
 ## Code
 ### Generating cited responses
 
-Update the path in `requirements.yml` and create the conda environment. 
+Update the to-do's in `ea_spectrum.yml` and create the conda environment. 
 ```
-conda env create --name ea_spectrum --file=attrib_environment.yml
+conda env create --name ea_spectrum --file=ea_spectrum.yml
 ```
 
 Download the Natural Questions (NQ), Wikipedia and Wikidata Multi-Hop (2WikiMH), and Multiple Answer Spans Healthcare (MASH) query datasets to `citation_systems/data`.
