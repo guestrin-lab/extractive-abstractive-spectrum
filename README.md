@@ -32,9 +32,9 @@ Download the Natural Questions (NQ), Wikipedia and Wikidata Multi-Hop (2WikiMH),
 To obtain the snippet, quoted, paraphrased, entailed, and abstractive generations for the NQ (nq), Eta3G (eli5_nq), 2WikiMH (multihop), and MASH (mash) datasets:
 
 ```
-python citation_systems/generateOperatingPoints.py --start_n 0 --n 20 --project_name example --data nq --best_of_k 10
+python citation_systems/generateOperatingPoints.py --start_n 0 --n 20 --project_name example --data nq --best_of_k 10 --retriever google
 ```
-To use gold-standard sources for MASH (`--data mash`) and 2WikiMH (`--data multihop`), also add `--gold`.
+To use gold-standard sources for MASH (`--data mash`) and 2WikiMH (`--data multihop`), replace `--retriever google` with `--gold`.
 
 To obtain the scraped gemini generations (using `save_gemini_html.js` and stored in `example_directory`):
 
