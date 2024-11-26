@@ -14,7 +14,7 @@ To rigorously examine the interplay between the verifiability and utility of inf
 
 We define five operating points that span the extractive-abstractive spectrum and conduct human evaluations on seven systems across four diverse query distributions that reflect real-world QA settings: web search, language simplification, multi-step reasoning, and medical advice. As outputs become more abstractive, our results below demonstrate that perceived utility improves by as much as 200\%, while the proportion of properly cited sentences decreases by as much as 50\% and users take up to 3 times as long to verify cited information. 
 
-In this repository, we share our code to obtain generations from the seven systems, run human evaluation on a [Streamlit](https://streamlit.io/) and [Supabase](https://supabase.com/) webapp, and visualize the results. We will be releasing our human evaluation data shortly.
+In this repository, we share our code to obtain generations from the seven systems, run human evaluation on a [Streamlit](https://streamlit.io/) and [Supabase](https://supabase.com/) webapp, and visualize the results. We also provide our human evaluation data, processing pipeline, and visualization code.
 
 ## Code
 ### Generating cited responses
@@ -76,7 +76,11 @@ Credentials and API keys for Supabase and MTurk should also be stored in the `se
 Run the app locally by calling `streamlit run annotation_interface/sl_app.py`. The webapp can be deployed through Streamlit.
 
 ## Human evaluation data
-Coming soon!
+Processed human evaluation results for the five reference operating point generations (`_ops_`) as well as the GPT-4 + Vertex and Gemini generations (`_baselines_`) are available in `mturk_results/processed_results`. Files ending in `_needs_citation` only contain results for sentences that require citation, as judged by the Vertex API. Files ending in `_all` only contain results for all sentences. The human evaluation results before processing are stored in `mturk_results/unprocessed_results`.
+
+We provide our processing pipeline `visualize_results/clean_mturk_results.ipynb` that obtains the processed result files from the unprocessed results. The processed result files are visualized, as presented in the paper, in `visualize_results/plotting_by_metric.ipynb`. We also provide the processing pipeline as a script: `visualize_results/clean_results.py`.
+
+The user preference survey results are available in `prolific_results` and visualized in `visualize_results/prolific_platform_preference.ipynb`.
 
 ### Contact
 [Theodora Worledge](teddiw.github.io)
