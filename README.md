@@ -49,7 +49,7 @@ To obtain the GPT-4 + Vertex generations:
 python citation_systems/generatePostHocOutputs.py --start_n 0 --n 20 --project_name example --data nq
 ```
 
-Each of the scripts above produce a `.json` file of results where each row corresponds to one query with five cited generations. To obtain a file with rows corresponding to individual responses for a query, use the `citation_systems/annotation_processing_for_sl.py` script as described in the next section.
+Each of the scripts above produce a `.json` file of results where each row corresponds to one query with five cited generations. To obtain a file with rows corresponding to individual responses for a query, use the `citation_systems/annotation_processing_for_sl.py` script as described in the next section. None of the example commands above should take more than an hour to run.
 
 ### Using the annotation interface
 To use the annotation interface, create a new Supabase project and create the tables specified in `annotation_interface/table_schemas.txt`.
