@@ -23,6 +23,7 @@ Update the to-do's in `ea_spectrum.yml` and create the conda environment.
 ```
 conda env create --name ea_spectrum --file=ea_spectrum.yml
 ```
+This should take under ten minutes. 
 
 Download the Natural Questions (NQ), Wikipedia and Wikidata Multi-Hop (2WikiMH), and Multiple Answer Spans Healthcare (MASH) query datasets to `citation_systems/data`.
 - NQ: https://ai.google.com/research/NaturalQuestions/download
@@ -82,5 +83,21 @@ We provide our processing pipeline `visualize_results/clean_mturk_results.ipynb`
 
 The user preference survey results are available in `prolific_results` and visualized in `visualize_results/prolific_platform_preference.ipynb`.
 
-### Contact
+## Citation
+```
+@misc{worledge2024extractiveabstractivespectrumuncoveringverifiability,
+      title={The Extractive-Abstractive Spectrum: Uncovering Verifiability Trade-offs in LLM Generations}, 
+      author={Theodora Worledge and Tatsunori Hashimoto and Carlos Guestrin},
+      year={2024},
+      eprint={2411.17375},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2411.17375}, 
+}
+```
+
+## Contact
 [Theodora Worledge](teddiw.github.io)
+
+## License
+This project is released under the Apache 2.0 License.
