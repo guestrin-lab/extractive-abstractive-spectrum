@@ -37,7 +37,7 @@ python citation_systems/generateOperatingPoints.py --start_n 0 --n 20 --project_
 ```
 To use gold-standard sources for MASH (`--data mash`) and 2WikiMH (`--data multihop`), replace `--retriever google` with `--gold`.
 
-To obtain the scraped gemini generations (using `save_gemini_html.js` and stored in `example_directory`):
+To obtain the cited gemini generations from files scraped using `save_gemini_html.js` and stored in `example_directory`:
 
 ```
 python citation_systems/generateGeminiOutputs.py --start_n 0 --n 20 --project_name example --data nq  --html_directory_path example_directory
