@@ -58,12 +58,6 @@ def generate_quoted_answer(question, subquestions, sources, backbone_model, data
     else:
         print('Quoted OP not implemented for this dataset.')
         exit()
-
-    print('... Generating Quoted Answer ...')
-    print('--------------------------------------------------------------------------------------------------------------------------------------------')
-    print(prompt_box)
-    print('--------------------------------------------------------------------------------------------------------------------------------------------')
-    breakpoint()
     
     response, details_dict = generate_from_model(backbone_model, prompt)
     return response, details_dict
@@ -84,12 +78,6 @@ def generate_paraphrased_answer(query, quoted_output, backbone_model, dataset=No
     else:
         print('PP OP not implemented for this dataset.')
         exit()
-
-    print('... Generating Paraphrased Answer ...')
-    print('--------------------------------------------------------------------------------------------------------------------------------------------')
-    print(prompt_box)
-    print('--------------------------------------------------------------------------------------------------------------------------------------------')
-    breakpoint()
 
     response, details_dict = generate_from_model(backbone_model, prompt)
     return response, details_dict
@@ -112,12 +100,6 @@ def generate_entailed_answer(query, quoted_output, backbone_model, dataset=None)
         print('Ent OP not implemented for this dataset.')
         exit()
 
-    print('... Generating Entailed Answer ...')
-    print('--------------------------------------------------------------------------------------------------------------------------------------------')
-    print(prompt_box)
-    print('--------------------------------------------------------------------------------------------------------------------------------------------')
-    breakpoint()
-
     response, details_dict = generate_from_model(backbone_model, prompt)
     return response, details_dict
 
@@ -137,12 +119,6 @@ def generate_citeable_abstractive_answer(question, quoted_output, backbone_model
     else: 
         print('Abs OP not implemented for this dataset.')
         exit()
-
-    print('... Generating Abstractive Answer ...')
-    print('--------------------------------------------------------------------------------------------------------------------------------------------')
-    print(prompt_box)
-    print('--------------------------------------------------------------------------------------------------------------------------------------------')
-    breakpoint()
 
     response, details_dict = generate_from_model(backbone_model, prompt)
     return response, details_dict

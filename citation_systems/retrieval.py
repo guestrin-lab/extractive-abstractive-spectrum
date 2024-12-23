@@ -314,8 +314,12 @@ class GoogleDPRRetrieval:
             self.backbone_model = OpenAI()
             self.retrieve = self.retrieve_for_super_question
         
-        if (not os.path.exists('cache/google_cache_dict.pkl')):
-            with open('cache/google_cache_dict.pkl', 'wb') as f:
+        cache_dir = 'cache'
+        google_cache_fp = os.path.join(cache_dir, 'google_cache_dict.pkl')
+        if not os.path.exists(google_cache_fp):
+            if not os.path.exists(cache_dir):
+                os.makedirs(cache_dir, exist_ok=False)
+            with open(google_cache_fp, 'wb') as f:
                 pickle.dump({}, f)
         with open('cache/google_cache_dict.pkl', 'rb') as f:
             self.cache_dict = pickle.load(f)

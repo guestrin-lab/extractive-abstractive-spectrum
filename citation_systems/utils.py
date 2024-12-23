@@ -353,12 +353,7 @@ def cite_paraphrased_quotes(quoted_response, paraphrased_response, sources, back
             exit()
         prompt = construct_prompt(id_pp_ent_abs_citations_instruction_str, few_shot_examples_dict, [text_str, quotes_str], citation_response_str)
         prompt_box = construct_pp_ent_abs_citation_prompt_box(id_pp_ent_abs_citations_instruction_str, few_shot_examples_dict, [text_str, quotes_str], citation_response_str)
-        
-        print('... Generating Citations ...')
-        print('--------------------------------------------------------------------------------------------------------------------------------------------')
-        print(prompt_box)
-        print('--------------------------------------------------------------------------------------------------------------------------------------------')
-        breakpoint()
+
         response, _ = generate_from_model(backbone_model, prompt)
 
         split_ls = response.split('[')
