@@ -2,8 +2,6 @@ import os
 from openai import OpenAI
 from naturalQuestions import NaturalQuestions
 from wikiMultiHopQA import WikiMultiHopQA
-from medicalQA import MedicalQA
-from emrQA import EmrQA
 from mashQA import MashQA
 from quoteEval import eval_precision, eval_quote_coverage
 import numpy as np
@@ -316,12 +314,8 @@ def main(args):
     
     if ((args.data == 'nq') or (args.data == 'eli5_nq')):
         data = NaturalQuestions(seed=0)
-    elif (args.data == 'medical'):
-        data = MedicalQA(seed=0)
     elif (args.data == 'multihop'):
         data = WikiMultiHopQA(seed=0)
-    elif (args.data == 'emr'):
-        data = EmrQA(seed=0)
     elif (args.data == 'mash'):
         data = MashQA(seed=0)
     
@@ -367,7 +361,7 @@ if __name__ == "__main__":
     parser.add_argument('--n', type=int, default=60)
     parser.add_argument('--num_IC_sources', type=int, default=10) # only used for GoogleDPRRetrieval
     parser.add_argument('--project_name', type=str, required=True)
-    parser.add_argument('--data', type=str, required=True) # 'nq' or 'medical' or 'multihop' or 'emr' or 'eli5_nq'or 'mash'
+    parser.add_argument('--data', type=str, required=True) # 'nq' or 'multihop' or 'eli5_nq'or 'mash'
     parser.add_argument('--best_of_k', type=int, default=10)
     args = parser.parse_args()
     main(args)

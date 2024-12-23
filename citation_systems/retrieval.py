@@ -1,13 +1,9 @@
-from txtai import Embeddings
-from txtai.pipeline import LLM
 import torch
 from transformers import RagTokenizer, RagRetriever, DPRReader, DPRReaderTokenizer, RagSequenceForGeneration, DPRContextEncoder, DPRContextEncoderTokenizer, DPRQuestionEncoder, DPRQuestionEncoderTokenizer
-import datasets
 from pathlib import Path
 import requests
 from urllib.request import urlopen
 from bs4 import BeautifulSoup, ParserRejectedMarkup
-from rank_bm25 import BM25Okapi
 from utils import standardize_quotation_marks
 import numpy as np
 import time 
@@ -23,72 +19,8 @@ from sentence_transformers import SentenceTransformer
 
 GOOGLE_API_KEY = os.environ['GOOGLE_API_KEY']
 GOOGLE_SEARCH_ENGINE_ID = os.environ['GOOGLE_SEARCH_ENGINE_ID']
-BING_API_KEY = os.environ['BING_API_KEY']
 timeout = 10
 socket.setdefaulttimeout(timeout)
-
-class TxtaiRetrieval:
-    def __init__(self):
-        self.embeddings = Embeddings()
-        self.embeddings.load(provider='huggingface-hub', container='neuml/txtai-wikipedia')
-
-    def retrieve(self, question):
-        retrieved_sources = [x["text"] for x in self.embeddings.search(question)]
-        return retrieved_sources
-
-class BM25Retrieval:
-    def __init__(self):
-        return 
-
-    def retrieve(self, question, text):
-        text_chunks = []
-        j = 0
-        while (j < len(text)):
-            text_chunks.append(text[j:min(len(text), j+1000)])
-            j += 1000
-
-        tokenized_text_chunks = [chunk.split(" ") for chunk in text_chunks]
-        bm25 = BM25Okapi(tokenized_text_chunks)
-        tokenized_query = question.split(" ")
-        doc_scores = bm25.get_scores(tokenized_query)
-        top_idxs = (-doc_scores).argsort()[:3] 
-        top_chunks = np.array(text_chunks)[top_idxs].tolist()
-        return top_chunks
-
-class FBDPRRetrieval:
-    def __init__(self):
-        datasets.config.DOWNLOADED_DATASETS_PATH = Path("/u/scr/nlp/data/wiki_dpr/huggingface/datasets/downloads")
-        self.tokenizer = RagTokenizer.from_pretrained("facebook/rag-sequence-nq")
-        self.retriever = RagRetriever.from_pretrained("facebook/rag-sequence-nq", index_name="exact", use_dummy_dataset=False)
-
-    def retrieve(self, question):
-        input_dict = self.tokenizer.prepare_seq2seq_batch(question, return_tensors="pt")
-        input_ids = input_dict["input_ids"]
-        question_hidden_states = self.model.question_encoder(input_ids)[0]
-        docs_dict = self.retriever(input_ids.numpy(), question_hidden_states.detach().numpy(), return_tensors="pt")
-        doc_scores = torch.bmm(question_hidden_states.unsqueeze(1), docs_dict["retrieved_doc_embeds"].float().transpose(1, 2)).squeeze(1)
-        source_ls = self.tokenizer.batch_decode(docs_dict['context_input_ids'], skip_special_tokens=True) # returns a list of length 5
-        for i in range(len(source_ls)):
-            s = source_ls[i]
-            source_ls[i] = s.replace(question, "")
-            source_ls[i] = s.replace(question.lower(), "")
-        return source_ls
-
-class BingBM25Retrieval:
-    def __init__(self):
-        self.search_url = "https://api.bing.microsoft.com/v7.0/search"
-
-    def retrieve(self, question):
-        texts, urls, titles = bing_retrieve(question, 5)
-        all_text_chunks, chunk_url_idxs = chunk_results(texts)
-        tokenized_text_chunks = [chunk.split(" ") for chunk in all_text_chunks]
-        bm25 = BM25Okapi(tokenized_text_chunks)
-        tokenized_query = question.split(" ")
-        doc_scores = bm25.get_scores(tokenized_query)
-        top_idxs = (-doc_scores).argsort()[:3] 
-        top_chunks = np.array(all_text_chunks)[top_idxs].tolist()
-        top_chunk_urls = np.array(urls)[np.array(chunk_url_idxs)[top_idxs]]
-        return top_chunks, top_chunk_urls
     
 def google_retrieve(question, num_webpages, avoid_webmd, avoid_wikipedia):
     texts = []
@@ -187,43 +119,6 @@ def html_to_text(html, url):
     if ('https://en.wikipedia.org' in url):
         text = clean_wikipedia_citations(text)
     return text
-
-def bing_retrieve(question, num_webpages):
-    search_url = "https://api.bing.microsoft.com/v7.0/search"
-    headers = {"Ocp-Apim-Subscription-Key": BING_API_KEY}
-    
-    texts = []
-    urls = []
-    titles = []
-    num_searches = 0
-    while (len(urls) < num_webpages):
-        params = {"q": question, "textDecorations": True, "textFormat": "HTML", "count":23, "offset":23*num_searches}
-        response = requests.get(search_url, headers=headers, params=params)
-        response_json = response.json()
-        num_searches += 1
-        i = 0
-        while ((not response_json) or ('webPages' not in response_json.keys())):
-            print('Bing timeout. Trying again...')
-            time.sleep(3)
-            response = requests.get(search_url, headers=headers, params=params)
-            response_json = response.json()
-            
-        while ((i < len(response_json['webPages']['value'])) and (len(urls) < num_webpages)):
-
-            curr_url = response_json['webPages']['value'][i]['url']
-            try:
-                with urlopen(curr_url) as url_response:
-                    html = url_response.read()
-            except:
-                i += 1
-                continue
-            urls.append(curr_url)
-            titles.append(response_json['webPages']['value'][i]['name'])
-            texts.append(html_to_text(html, curr_url))
-            i += 1
-        
-    
-    return texts, urls, titles 
 
 def old_chunk_results(texts): # chunks into full sentences
     all_text_chunks = []
@@ -496,7 +391,7 @@ class GoogleDPRRetrieval:
 
     def retrieve_for_subquestion(self, question):
         print('Searching the internet...')
-        texts, urls, titles = google_retrieve(question, self.num_webpages, self.avoid_webmd, self.avoid_wikipedia) # bing_retrieve
+        texts, urls, titles = google_retrieve(question, self.num_webpages, self.avoid_webmd, self.avoid_wikipedia) 
         
         print('Found '+str(len(urls))+' webpages!')
         all_text_chunks, chunk_url_idxs = chunk_results(texts)

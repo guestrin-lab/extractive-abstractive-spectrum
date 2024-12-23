@@ -12,7 +12,6 @@ from instructions import is_abstained_instruction_str
 from few_shot_examples import is_abstained_few_shot_examples_dict
 from openai import OpenAI
 import global_vars
-import tiktoken
 
 COLORS = {0:'\033[92m', 1:'\033[96m', 2:'\033[95m', 3:'\033[1;31;60m', 4:'\033[102m', 5:'\033[1;35;40m', 6:'\033[0;30;47m', 7:'\033[0;33;47m', 8:'\033[0;34;47m', 9:'\033[0;31;47m', 10:'\033[0m', 11:'\033[1m'}
 
@@ -62,17 +61,6 @@ def generate_from_model(backbone_model, prompt, model_str="gpt-4-0125-preview"):
                     'max_tokens':max_tokens, 
                     'temperature':temperature}
 
-    
-    
-    enc = tiktoken.encoding_for_model(model_str)
-    input_tokens = enc.encode(prompt)
-    output_tokens = enc.encode(response.choices[0].message.content)
-    num_input_tokens = len(input_tokens)
-    num_output_tokens = len(output_tokens)
-    
-    global_vars.inference_run_count += 1
-    global_vars.inference_token_input_count += num_input_tokens
-    global_vars.inference_token_output_count += num_output_tokens
     return response.choices[0].message.content, details_dict
 
 def format_source_list(source_ls):
