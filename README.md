@@ -43,8 +43,11 @@ To obtain the cited gemini generations from files scraped using `save_gemini_htm
 python citation_systems/generateGeminiOutputs.py --start_n 0 --n 20 --project_name example --data nq  --html_directory_path example_directory
 ``` 
 
-To obtain the GPT-4 + Vertex generations:
-
+To obtain the GPT-4 + Vertex generations, install the packages below, add in the `GOOGLE_API_KEY` and `project_id` to `generatePostHocOutputs.py`, and then run the following script:
+```
+pip install vertexai
+pip install google-cloud-discoveryengine
+```
 ```
 python citation_systems/generatePostHocOutputs.py --start_n 0 --n 20 --project_name example --data nq
 ```
