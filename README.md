@@ -25,7 +25,7 @@ conda env create --name ea_spectrum --file=ea_spectrum.yml
 ```
 This should take under ten minutes. 
 
-Download the Natural Questions (NQ), Wikipedia and Wikidata Multi-Hop (2WikiMH), and Multiple Answer Spans Healthcare (MASH) query datasets to `citation_systems/data`.
+Download the Natural Questions (NQ), Wikipedia and Wikidata Multi-Hop (2WikiMH), and Multiple Answer Spans Healthcare (MASH) query datasets to `data`.
 - NQ: https://ai.google.com/research/NaturalQuestions/download
 - 2WikiMH: https://github.com/Alab-NII/2wikimultihop?tab=readme-ov-file
 - MASH: https://github.com/mingzhu0527/MASHQA?tab=readme-ov-file
