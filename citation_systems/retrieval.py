@@ -301,9 +301,10 @@ class GoogleDPRRetrieval:
     def __init__(self, num_webpages_to_retrieve, num_chunks_to_retrieve, data=None):
         self.search_url = "https://api.bing.microsoft.com/v7.0/search"
         self.source_tokenizer = DPRContextEncoderTokenizer.from_pretrained("facebook/dpr-ctx_encoder-single-nq-base", model_max_length=512)
-        self.source_encoder = DPRContextEncoder.from_pretrained("facebook/dpr-ctx_encoder-single-nq-base").to(torch.device('cuda'))
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.source_encoder = DPRContextEncoder.from_pretrained("facebook/dpr-ctx_encoder-single-nq-base").to(device)
         self.query_tokenizer = DPRQuestionEncoderTokenizer.from_pretrained("facebook/dpr-question_encoder-single-nq-base", model_max_length=512)
-        self.query_encoder = DPRQuestionEncoder.from_pretrained("facebook/dpr-question_encoder-single-nq-base").to(torch.device('cuda'))
+        self.query_encoder = DPRQuestionEncoder.from_pretrained("facebook/dpr-question_encoder-single-nq-base").to(device)
         self.num_chunks = num_chunks_to_retrieve
         self.num_webpages = num_webpages_to_retrieve
         self.tokenizer = DPRReaderTokenizer.from_pretrained("facebook/dpr-reader-single-nq-base")
@@ -377,11 +378,12 @@ class GoogleDPRRetrieval:
         return self.get_from_cache(question)
 
     def dpr_retrieval(self, question, urls, titles, all_text_chunks, chunk_url_idxs):
-        query_ids = self.query_tokenizer(question, return_tensors="pt", truncation=True)["input_ids"].to(torch.device('cuda'))
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        query_ids = self.query_tokenizer(question, return_tensors="pt", truncation=True)["input_ids"].to(device)
         query_embeddings = self.query_encoder(query_ids).pooler_output.detach().cpu()
         scores = []
         for i in range(len(all_text_chunks)):
-            text_ids = self.source_tokenizer(all_text_chunks[i], return_tensors="pt", truncation=True)["input_ids"].to(torch.device('cuda'))
+            text_ids = self.source_tokenizer(all_text_chunks[i], return_tensors="pt", truncation=True)["input_ids"].to(device)
             text_embeddings = self.source_encoder(text_ids).pooler_output.detach().cpu()
             scores.append(np.dot(query_embeddings.detach().numpy(), text_embeddings.detach().numpy().T).item())
             if (i%100 == 0):

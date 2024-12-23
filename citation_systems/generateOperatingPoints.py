@@ -11,6 +11,7 @@ from eval import AutoEvaluator, evaluate_quote_precision, evaluate_quote_coverag
 from utils import *
 import json
 from copy import deepcopy
+from retrieval import GoogleDPRRetrieval
 
 backbone_model = OpenAI()
 results_keys = ["ID", 
