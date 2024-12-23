@@ -25,7 +25,6 @@ from vertexai.generative_models import (
 )
 from google.cloud import discoveryengine_v1alpha as discoveryengine
 
-os.environ['GOOGLE_API_KEY'] = '' # TODO
 COLORS = {0:'\033[92m', 1:'\033[96m', 2:'\033[95m', 3:'\033[1;31;60m', 4:'\033[102m', 5:'\033[1;35;40m', 6:'\033[0;30;47m', 7:'\033[0;33;47m', 8:'\033[0;34;47m', 9:'\033[0;31;47m', 10:'\033[0m', 11:'\033[1m'}
 BACKBONE_MODEL = OpenAI()
 
