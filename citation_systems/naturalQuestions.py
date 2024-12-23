@@ -13,9 +13,9 @@ class NaturalQuestions(Dataset):
     def __init__(self, seed=0):
         print('Loading data...')
         random.seed(seed)
-        processed_nq_fp = "data/natural-questions/v1.0/dev/processed_nq.pkl"
+        processed_nq_fp = "data/processed_nq.pkl"
         if (not os.path.exists(processed_nq_fp)):
-            data_file = "data/v1.0/dev/nq-dev-00.jsonl.gz"
+            data_file = "data/v1.0-simplified_nq-dev-all.jsonl.gz"
             with gzip.open(data_file, mode="rt") as f:
                 self.data = [json.loads(line) for line in f]
             self.processed_data = []
