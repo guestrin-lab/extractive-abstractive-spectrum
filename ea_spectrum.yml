@@ -1,6 +1,7 @@
 name: ea_spectrum
 channels:
   - defaults
+  - conda-forge
 dependencies:
   - annotated-types=0.6.0=py312hca03da5_0
   - anyio=4.2.0=py312hca03da5_0
