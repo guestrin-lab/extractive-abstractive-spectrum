@@ -112,3 +112,26 @@ def load_all_mturk_results(needs_citation_only=True):
         all_results = pd.concat([all_results, results_k])
         results_dict[k] = results_k
     return all_results, results_dict
+
+def load_all_auto_eval_results(model_type, baselines=False): # "gpt4", "gpt5", "eli3g"
+    all_results = pd.DataFrame()
+    results_dict = {}
+    auto_eval_dataset_str_ls = ['nq', 'eta3g', 'mh', 'mash']
+    for k, k_consistent in zip(auto_eval_dataset_str_ls, datasets):
+        # nq_auto_eval_byQueryOP_ops_needs_citation.csv
+        fp = f'{mturk_fp}{k.lower()}_auto_eval_byQueryOP_ops_needs_citation_{model_type}.csv'
+        results_k = pd.read_csv(fp, index_col=False)
+        
+        # if gpt4, then also load the baseline results
+        if (model_type == 'gpt4') and baselines:
+            baseline_fp = f'{mturk_fp}{k.lower()}_auto_eval_byQueryOP_baselines_needs_citation_{model_type}.csv'
+            baseline_results_k = pd.read_csv(baseline_fp, index_col=False)
+            baseline_results_k = baseline_results_k[baseline_results_k['op']!='Quoted']
+            results_k = pd.concat([results_k, baseline_results_k], ignore_index=True)
+
+        results_dict[k_consistent] = results_k
+        results_k['dataset'] = k_consistent
+        all_results = pd.concat([all_results, results_k])
+
+    
+    return all_results, results_dict
