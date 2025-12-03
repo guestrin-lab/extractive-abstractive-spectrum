@@ -6,8 +6,13 @@ parse_sent_instruction_str = "Convert the following text into a list of its sent
 subquestion_instruction_str = "Break down the following question into the sub-questions that must be answered first in order to answer it. Sometimes, the question cannot be broken down; in this case, just return the question verbatim. Otherwise, list the sub-questions out and do not number them."
 posthoc_supporting_sentences_instruction_str = "Which sentences from the source below support the claims in the following text? Copy the supporting sentences exactly as they appear in the source. If there are no supporting sentences, simply respond with \"None\"."
 
-# Quoted OP generation
+#  Quoted OP generation
+# Used for GPT-4
 quote_cot_base_instruction_str = "Respond to the following query using word-for-word quotes from the sources provided below. The following sub-questions will help you answer the query; be sure that your response to the query answers each sub-question using a quotation from a source. Clearly indicate the quotes to avoid plagiarizing! Be concise in your response and focus on information that responds to the query. Do not refer to the sources in your response."
+
+# Used for GPT-5 and Sonnet 4.5
+# quote_cot_base_instruction_str: "Respond to the following query using word-for-word quotes from the sources provided below. Clearly indicate the quotes with double quotes to avoid plagiarizing! Please present the quotes as inline quotes within grammatically correct sentences. Do not add new information with unquoted words. Be concise in your response and focus on information that responds to the query——do not repeat information already quoted. Do not refer to the sources in your response."
+
 retrieval_quote_cot_instruction_str = quote_cot_base_instruction_str + "The provided sources should contain enough information to write a response to the query. However, in the rare case that the sources are insufficient, then respond with \"Insufficient information to generate a grounded response.\""
 gold_quote_cot_instruction_str = quote_cot_base_instruction_str + "The information to answer the query is in the provided sources."
 

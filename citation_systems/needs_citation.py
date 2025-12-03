@@ -13,6 +13,7 @@ import argparse
 import json
 from abstraction_metrics import *
 import time
+import ast
 
 from vertexai.generative_models import (
     GenerationConfig,
@@ -21,8 +22,6 @@ from vertexai.generative_models import (
     grounding,
 )
 from google.cloud import discoveryengine_v1alpha as discoveryengine
-
-GOOGLE_API_KEY = '' # TODO
 
 project_id = '' # TODO Google project ID
 client = discoveryengine.GroundedGenerationServiceClient()
@@ -48,63 +47,48 @@ def get_for_all(baselines=True):
             mturk_results.to_csv(save_path)
         print('Saved to '+save_path)
 
+
 def get_for_df(df):
+    num_calls = 0
     new_col = []
     for i in range(len(df)):
-        if (i%100==0):
-            time.sleep(60)
         if (df['op'].iloc[i] == 'Snippet'):
             sentences_need_citation = []
         else:
-            response = df.iloc[i]['Output']
-            request = discoveryengine.CheckGroundingRequest(
-                grounding_config=grounding_config,
-                answer_candidate=response,
-                facts=[discoveryengine.GroundingFact(
-                                fact_text=("None"),
-                                attributes={"uri": "None"},
-                                )],
-                grounding_spec=discoveryengine.CheckGroundingSpec(citation_threshold=.1),
-            )
-            needs_citation_response = client.check_grounding(request=request)
-
+            sentences = ast.literal_eval(df.iloc[i]['Sent'])
             sentences_need_citation = []
-            for j in range(len(needs_citation_response.claims)):
-                needs_citation = needs_citation_response.claims[j].grounding_check_required
-                sentences_need_citation.append(needs_citation)
+            for sentence in sentences:
+                try:
+                    request = discoveryengine.CheckGroundingRequest(
+                        grounding_config=grounding_config,
+                        answer_candidate=sentence,
+                        facts=[discoveryengine.GroundingFact(
+                                        fact_text=("None"),
+                                        attributes={"uri": "None"},
+                                        )],
+                        grounding_spec=discoveryengine.CheckGroundingSpec(citation_threshold=.1),
+                    )
+                    needs_citation_response = client.check_grounding(request=request)
+                    num_calls += 1
+                    if (num_calls % 100 == 0):
+                        time.sleep(45)
+
+                    sentence_needs_citation = False
+                    for j in range(len(needs_citation_response.claims)):
+                        needs_citation = needs_citation_response.claims[j].grounding_check_required
+                        # If any part of the sentence needs citation, then mark the sentence as needing citation
+                        sentence_needs_citation = sentence_needs_citation or needs_citation
+                except:
+                    print(f"Error at index {i} ID: {df['query_id'].iloc[i]} OP: {df['op'].iloc[i]}. Skipping...")
+                    print(f"Index: {i} OP: {df['op'].iloc[i]} ID: {df['query_id'].iloc[i]}")
+                    sentence_needs_citation = True # Assume it needs citation if there's an error
+
+                sentences_need_citation.append(sentence_needs_citation)
+                print(f"{sentence_needs_citation}:   {sentence}")
+                
         new_col.append(sentences_need_citation)
     df['Sentences Need Citation'] = new_col
     return df
-
-def get_for_entailed_entries_of_json(df):
-    new_col = []
-    for i in range(len(df)):
-        if (i%100==0):
-            time.sleep(60)
-        response = df.iloc[i]['Entailed Output']
-        try:
-            request = discoveryengine.CheckGroundingRequest(
-                grounding_config=grounding_config,
-                answer_candidate=response,
-                facts=[discoveryengine.GroundingFact(
-                                fact_text=("None"),
-                                attributes={"uri": "None"},
-                                )],
-                grounding_spec=discoveryengine.CheckGroundingSpec(citation_threshold=.1),
-            )
-        
-            needs_citation_response = client.check_grounding(request=request)            
-
-            sentences_need_citation = []
-            for j in range(len(needs_citation_response.claims)):
-                needs_citation = needs_citation_response.claims[j].grounding_check_required
-                sentences_need_citation.append(needs_citation)
-        except:
-            sentences_need_citation = []
-        new_col.append(sentences_need_citation)
-    df['Entailed Sentences Need Citation'] = new_col
-    return df
-
 
 
 def main():
