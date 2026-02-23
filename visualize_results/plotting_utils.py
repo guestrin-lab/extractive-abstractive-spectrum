@@ -2,6 +2,14 @@ import ast
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import nltk
+nltk.download('punkt')
+from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktParameters
+punkt_param = PunktParameters()
+abbreviation = ['u.s.a', 'fig', 'u.s', 'i.e', 'e.g', 'etc', 'c', 'ca', 'ms', 'mrs', 'mr', 'vs', 'lt', 'sgt', 'col', 'maj', 'capt', 'cpt', 'a.x', 'no', 'op', 'dr']
+punkt_param.abbrev_types = set(abbreviation)
+SENT_TOKENIZER = PunktSentenceTokenizer(punkt_param)
+
 
 ###################################################################################################
 # Extract data from database CSVs
@@ -254,6 +262,31 @@ def get_fluency_or_utility_by_op(results, data_key, op_ls):
         annotations_by_op[op] = results[results['op']==op][data_key]
         annotations_by_op[op] = [x for x in annotations_by_op[op] if x != -1]
     return annotations_by_op
+    
+def get_sentences_tokenizer(text):
+    return SENT_TOKENIZER.tokenize(text)
+
+def get_sentence_length_by_op(results):
+    ops = np.unique(results['op'])
+    all_results = {}
+    for op in ops:
+        relevant_results = results[results['op']==op]
+        if op != "Snippet":
+            all_ls = []
+            for k in range(len(relevant_results)):
+                sentences_ls = eval(relevant_results['Sent'].iloc[k])
+                all_ls.extend([len(sentence.split(' ')) for sentence in sentences_ls])
+            all_results[op] = np.mean(all_ls)
+        else:
+            all_ls = []
+            for k in range(len(relevant_results)):
+                snippets = ast.literal_eval(relevant_results['Output'].iloc[0])
+                snippets = ' '.join(snippets)
+                sentences_ls = get_sentences_tokenizer(snippets)
+                all_ls.extend([len(sentence.split(' ')) for sentence in sentences_ls])
+            all_results[op] = np.mean(all_ls)
+
+    return all_results
 
 def get_t2v_for_op_given_coverage_value(results, op, coverage_value):
     # a function to get the T2V when coverage is 1 and when coverage is 0
@@ -412,6 +445,10 @@ def get_avg_fluency_or_utility_by_op(results, data_key, op_ls):
     all_values = get_fluency_or_utility_by_op(results, data_key, op_ls)
     values, ci_ls = get_avg_and_ci_by_op(all_values, op_ls)
     return values, ci_ls
+
+def get_avg_sentence_lenth_by_op(results):
+    all_values = get_sentence_length_by_op(results)
+    return all_values
 
 def get_avg_t2v_by_op(results, op_ls, normalized=False, remove_outliers=False, coverage_value=-1, over_response=False, num_sentences=0):
     if (over_response and (coverage_value!=-1)):
